@@ -6,15 +6,20 @@ variable "AWS_REGION" {
   default = "eu-west-3"
 }
 
+variable "CLUSTER_NAME-nodes" {
+  default = "kubernetes"
+}
 variable "AWS_AMI" {
   type = map
   default = {
-    eu-west-3 = "ami-072ec828dae86abe5"
+    eu-west-3 = "ami-08df9719b135f181d"
   }
-
 
 }
 
+variable "KUBERNETES_VERSION" {
+  default = "1.19.3"
+}
 variable "PATH_TO_PRIVATE_KEY" {
   default = "k8s-keypair"
 }
@@ -32,11 +37,11 @@ variable "K8S_TOKEN" {
 }
 
 variable "MIN_ASG" {
-  default = 3
+  default = 1
 }
 
 variable "MAX_ASG" {
-  default = 6
+  default = 2
 }
 
 variable "CLUSTER_NAME" {

@@ -1,21 +1,21 @@
 #!/bin/bash
-sudo su
-ech""
+
 sudo exec &> /var/log/init-aws-kubernetes-master.log
 
 set -o verbose
 set -o errexit
 set -o pipefail
 
-export KUBEADM_TOKEN=${kubeadm_token}
-export IP_ADDRESS=${ip_address}
-export CLUSTER_NAME=${cluster_name}
-export ASG_NAME=${asg_name}
-export ASG_MIN_NODES="${asg_min_nodes}"
-export ASG_MAX_NODES="${asg_max_nodes}"
-export AWS_REGION=${aws_region}
-export AWS_SUBNETS="${aws_subnets}"
-export KUBERNETES_VERSION="1.19.4"
+export KUBEADM_TOKEN=$1
+export IP_ADDRESS=$2
+echo $IP_ADDRESS
+export CLUSTER_NAME=$3
+export ASG_NAME=$4
+export ASG_MIN_NODES=$5
+export ASG_MAX_NODES=$6
+export AWS_REGION=$7
+export AWS_SUBNETS=$8
+export KUBERNETES_VERSION="1.19.3"
 
 # Set this only after setting the defaults
 set -o nounset
@@ -27,17 +27,15 @@ FULL_HOSTNAME="$(curl -s http://169.254.169.254/latest/meta-data/hostname)"
 
 # Install AWS CLI client
 yum install -y epel-release
-yum install -y python2-pip
-pip install awscli --upgrade
+yum install -y python3-pip
 
-# Tag subnets
-for SUBNET in $AWS_SUBNETS
-do
-  aws ec2 create-tags --resources $SUBNET --tags Key=kubernetes.io/cluster/$CLUSTER_NAME,Value=shared --region $AWS_REGION
-done
+
 
 # Install docker
-yum install -y yum-utils device-mapper-persistent-data lvm2 docker
+yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
+dnf  config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+dnf -y list docker-ce
+dnf -y install docker-ce --nobest
 
 # Install Kubernetes components
 sudo cat <<EOF > /etc/yum.repos.d/kubernetes.repo
@@ -58,8 +56,9 @@ if [[ $is_enforced != "Disabled" ]]; then
   sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
   
 fi
+dnf upgrade -y
 
-yum install -y kubelet-$KUBERNETES_VERSION kubeadm-$KUBERNETES_VERSION kubernetes-cni
+dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 # Start services
 systemctl enable docker
@@ -83,54 +82,57 @@ cat >/tmp/kubeadm.yaml <<EOF
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: InitConfiguration
 bootstrapTokens:
-- groups:
-  - system:bootstrappers:kubeadm:default-node-token
-  token: $KUBEADM_TOKEN
-  ttl: 0s
+- token: $KUBEADM_TOKEN
+  description: "kubeadm bootstrap token"
+  ttl: "0s"
   usages:
-  - signing
   - authentication
+  - signing
+  groups:
+  - system:bootstrappers:kubeadm:default-node-token
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
-  kubeletExtraArgs:
-    cloud-provider: aws
-    read-only-port: "10255"
-  name: $FULL_HOSTNAME
+  criSocket: "/var/run/dockershim.sock"
   taints:
-  - effect: NoSchedule
-    key: node-role.kubernetes.io/master
+  - effect: "NoSchedule"
+    key: "node-role.kubernetes.io/master"
+  kubeletExtraArgs:
+    cloud-provider: "aws"
+  ignorePreflightErrors:
+  - IsPrivilegedUser
+  name: $FULL_HOSTNAME
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
-apiServer:
-  certSANs:
-  - $IP_ADDRESS
-  extraArgs:
-    cloud-provider: aws
-  timeoutForControlPlane: 5m0s
-certificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
-controllerManager:
-  extraArgs:
-    cloud-provider: aws
-dns:
-  type: CoreDNS
 etcd:
   local:
-    dataDir: /var/lib/etcd
-imageRepository: k8s.gcr.io
-kubernetesVersion: v$KUBERNETES_VERSION
+    imageRepository: "k8s.gcr.io"
+    imageTag: "3.2.24"
+    dataDir: "/var/lib/etcd"
 networking:
-  podNetworkCidr: 192.168.0.0/16
-  dnsDomain: cluster.local
+  serviceSubnet: "10.96.0.0/12"
   podSubnet: ""
-  serviceSubnet: 10.96.0.0/12
-scheduler: {}
+  dnsDomain: "cluster.local"
+kubernetesVersion: "v$KUBERNETES_VERSION"
+apiServer:
+  extraArgs:
+    cloud-provider: "aws"
+  certSANs:
+  - "$IP_ADDRESS"
+  timeoutForControlPlane: 6m0s
+controllerManager:
+  extraArgs:
+    cloud-provider: "aws"
+scheduler:
+  extraArgs:
+    cloud-provider: "aws"
+certificatesDir: "/etc/kubernetes/pki"
+imageRepository: "k8s.gcr.io"
+clusterName: "kubernetes"
 ---
 EOF
-
+swapoff -a
 kubeadm reset --force
-kubeadm init --config /tmp/kubeadm.yaml
+kubeadm init --config /tmp/kubeadm.yaml --v=5
 
 # Use the local kubectl config for further kubectl operations
 export KUBECONFIG=/etc/kubernetes/admin.conf

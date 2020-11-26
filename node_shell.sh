@@ -61,7 +61,7 @@ fi
 # Initialize the master
 cat >/tmp/kubeadm.yaml <<EOF
 ---
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1
 kind: JoinConfiguration
 discovery:
   bootstrapToken:

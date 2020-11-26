@@ -1,0 +1,56 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: InitConfiguration
+bootstrapTokens:
+- token: $KUBEADM_TOKEN
+  description: "kubeadm bootstrap token"
+  ttl: "0s"
+  usages:
+  - authentication
+  - signing
+  groups:
+  - system:bootstrappers:kubeadm:default-node-token
+nodeRegistration:
+  criSocket: "/var/run/dockershim.sock"
+  taints:
+  - effect: "NoSchedule"
+    key: "node-role.kubernetes.io/master"
+  kubeletExtraArgs:
+    cloud-provider: "aws"
+    read-only-port: "10255"
+  ignorePreflightErrors:
+  - IsPrivilegedUser
+  name: $FULL_HOSTNAME
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+etcd:
+  local:
+    imageRepository: "k8s.gcr.io"
+    imageTag: v$KUBERNETES_VERSION
+    dataDir: "/var/lib/etcd"
+networking:
+  podNetworkCidr: "192.168.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
+  podSubnet: ""
+  dnsDomain: "cluster.local"
+kubernetesVersion: "v$KUBERNETES_VERSION"
+apiServer:
+  extraArgs:
+    cloud-provider: "aws"
+  certSANs:
+  - $IP_ADDRESS
+  timeoutForControlPlane: 5m0s
+controllerManager:
+  extraArgs:
+    cloud-provider: "aws"
+scheduler:
+  extraArgs:
+    cloud-provider: "aws"
+certificatesDir: "/etc/kubernetes/pki"
+imageRepository: "k8s.gcr.io"
+clusterName: "example-cluster"
+---
+
+
+
+   
