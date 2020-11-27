@@ -38,8 +38,8 @@ resource "aws_iam_policy_attachment" "master-attach" {
   policy_arn = aws_iam_policy.master_policy.arn
 }
 
-resource "aws_iam_instance_profile" "master_profile" {
-  name = "master_profile"
+resource "aws_iam_instance_profile" "master_profile2" {
+  name = "master_profile2"
   role = aws_iam_role.master_role.name
 }
 
@@ -84,7 +84,7 @@ resource "aws_iam_policy_attachment" "node-attach" {
   policy_arn = aws_iam_policy.node_policy.arn
 }
 
-resource "aws_iam_instance_profile" "node_profile" {
-  name = "node_profile"
+resource "aws_iam_instance_profile" "node_profile2" {
+  name = "node_profile2"
   role = aws_iam_role.node_role.name
 }

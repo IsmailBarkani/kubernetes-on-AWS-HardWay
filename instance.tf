@@ -79,7 +79,7 @@ resource "aws_instance" "node_master" {
   instance_type          = "t2.medium"
   key_name               = aws_key_pair.k8s-keypair.key_name
   vpc_security_group_ids = [aws_security_group.security-group-cluster.id]
-  iam_instance_profile   = aws_iam_instance_profile.master_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.master_profile2.name
   #user_data              = data.template_cloudinit_config.cloudinit-master.rendered
   subnet_id              = aws_subnet.main-public-1.id
  provisioner "file" {
@@ -108,7 +108,7 @@ resource "aws_instance" "node_master" {
           "cd ~",
           "sudo chmod +x master_shell2.sh",
           "ls -l master_shell2.sh",
-          "sudo ./master_shell2.sh"
+          "sudo ./master_shell2.sh ${var.K8S_TOKEN}"
       ]
     }
   tags = {
@@ -131,7 +131,7 @@ resource "aws_launch_configuration" "nodes" {
   image_id             = "ami-08df9719b135f181d"
   instance_type        = "t2.medium"
   key_name             = aws_key_pair.k8s-keypair.key_name
-  iam_instance_profile = aws_iam_instance_profile.node_profile.name
+  iam_instance_profile = aws_iam_instance_profile.node_profile2.name
   security_groups      = [aws_security_group.security-group-cluster.id]
   user_data            = data.template_cloudinit_config.cloudinit-node.rendered
   lifecycle { create_before_destroy = true }

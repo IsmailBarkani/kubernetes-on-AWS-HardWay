@@ -33,7 +33,7 @@ variable "AWS_INSTANCE_USERNAME" {
 }
 
 variable "K8S_TOKEN" {
-  default = "3cmj21.tvqzs75rnubmrk9s"
+  default = "4hznti.qpq36r5l1jggsm6t"
 }
 
 variable "MIN_ASG" {
@@ -41,7 +41,7 @@ variable "MIN_ASG" {
 }
 
 variable "MAX_ASG" {
-  default = 2
+  default = 3
 }
 
 variable "CLUSTER_NAME" {

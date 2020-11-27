@@ -1,9 +1,12 @@
 #!/bin/bash
 
-export master_ip=$1
-echo ${master_ip}
-export master_ip=$1
-echo ${master_ip}
+export master_ip=${master_private_ip}
+echo $master_ip
+export token=${kubeadm_token}
+echo 
+cat <<EOF > /tmp/test.txt
+hey bro 
+EOF
 dnf -y upgrade
 
 echo "disable SELinux"
@@ -56,10 +59,7 @@ systemctl start kubelet
 firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp
 firewall-cmd --reload
 
-sleep 30s
-
-kubeadm join 10.0.1.88:6443 --token 4hznti.qpq36r5l1jggsm6t discovery-token-ca-cert-hash sha256:8463cd921ea311e3758fdbaac7e1228d346fe8045e76a8121538857e33a23659
-
+kubeadm join $master_ip:6443 --token $token --discovery-token-unsafe-skip-ca-verification --ignore-preflight-errors all
 
 
 

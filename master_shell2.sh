@@ -1,4 +1,7 @@
 #!/bin/bash
+export token=$1
+echo $token
+
 dnf -y upgrade
 
 echo "disable SELinux"
@@ -53,7 +56,7 @@ kubeadm config images pull
 firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
 firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
 firewall-cmd --reload
-kubeadm init --pod-network-cidr 192.168.0.0/16
+kubeadm init --token=$token --pod-network-cidr 192.168.0.0/16 
 
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
