@@ -41,7 +41,7 @@ variable "MIN_ASG" {
 }
 
 variable "MAX_ASG" {
-  default = 3
+  default = 6
 }
 
 variable "CLUSTER_NAME" {

@@ -1,13 +1,11 @@
 # Master
-
 data "template_file" "master_policy_json" {
   template = file("master-policy.json.tpl")
   vars     = {}
 }
 
 resource "aws_iam_policy" "master_policy" {
-  name = "master_policy"
-  #path        = "/"
+  name   = "master_policy"
   policy = data.template_file.master_policy_json.rendered
 }
 
@@ -29,7 +27,6 @@ resource "aws_iam_role" "master_role" {
   ]
 }
 EOF
-
 }
 
 resource "aws_iam_policy_attachment" "master-attach" {
@@ -43,8 +40,8 @@ resource "aws_iam_instance_profile" "master_profile2" {
   role = aws_iam_role.master_role.name
 }
 
-# Node
 
+# Node
 data "template_file" "node_policy_json" {
   template = file("node-policy.json.tpl")
 
@@ -52,8 +49,7 @@ data "template_file" "node_policy_json" {
 }
 
 resource "aws_iam_policy" "node_policy" {
-  name = "node_policy"
-  #path = "/"
+  name   = "node_policy"
   policy = data.template_file.node_policy_json.rendered
 }
 

@@ -2,7 +2,7 @@
 export token=$1
 echo $token
 
-dnf -y upgrade
+yum -y upgrade
 
 echo "disable SELinux"
 setenforce 0
@@ -25,9 +25,7 @@ sysctl --system
 
 swapoff -a
 
-dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-dnf -y install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
-dnf install docker-ce --nobest -y
+yum install docker -y 
 systemctl start docker
 systemctl enable docker
 
@@ -44,9 +42,9 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 exclude=kubelet kubeadm kubectl
 EOF
 
-dnf upgrade -y
+yum upgrade -y
 
-dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 systemctl enable kubelet
 systemctl start kubelet

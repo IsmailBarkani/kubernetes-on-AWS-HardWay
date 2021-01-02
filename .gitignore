@@ -1,6 +1,4 @@
 *.tfvars
 /.terraform
-k8s-keypair
-k8s-keypair.pub
 *.tfstate
 *.tfstate.backup

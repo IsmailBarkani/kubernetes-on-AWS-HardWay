@@ -2,61 +2,24 @@ resource "aws_key_pair" "k8s-keypair" {
   key_name   = "k8s-keypair"
   public_key = file(var.PATH_TO_PUBLIC_KEY)
 }
+
+
 ################
 # Template files
 ################
 
-data "template_file" "master_shell" {
-  template = file("master_shell.sh")
-  vars = {
-    kubeadm_token = var.K8S_TOKEN
-    ip_address    = aws_eip.master.public_ip
-    cluster_name  = var.CLUSTER_NAME
-    aws_region    = var.AWS_REGION
-    asg_name      = "var.CLUSTER_NAME-nodes"
-    asg_min_nodes = var.MIN_ASG
-    asg_max_nodes = var.MAX_ASG
-    aws_subnets   = join(" ", concat([aws_subnet.main-public-1.id], [aws_subnet.main-public-2.id]))
-  }
-}
-
 data "template_file" "node_shell" {
   template = file("node_shell.sh")
-
   vars = {
     kubeadm_token     = var.K8S_TOKEN
     master_ip         = aws_eip.master.public_ip
     master_private_ip = aws_instance.node_master.private_ip
   }
 }
-data "template_file" "cloud_init_config" {
-  template = file("cloud-init-config.yaml")
-  vars = {
-    calico_yaml = base64gzip(file("calico.yaml"))
-  }
-}
-
 
 ################
 # Cloud init config
 ################
-data "template_cloudinit_config" "cloudinit-master" {
-  gzip          = true
-  base64_encode = true
-
-  part {
-    filename     = "cloud-init-config.yaml"
-    content_type = "text/cloud-config"
-    content      = data.template_file.cloud_init_config.rendered
-  }
-
-  part {
-    filename     = "master_shell.sh"
-    content_type = "text/x-shellscript"
-    content      = data.template_file.master_shell.rendered
-  }
-}
-
 data "template_cloudinit_config" "cloudinit-node" {
   gzip          = true
   base64_encode = true
@@ -74,8 +37,9 @@ data "template_cloudinit_config" "cloudinit-node" {
 resource "aws_eip" "master" {
   vpc = true
 }
+
 resource "aws_instance" "node_master" {
-  ami                    = "ami-08df9719b135f181d"
+  ami                    = "ami-00798d7180f25aac2"
   instance_type          = "t2.medium"
   key_name               = aws_key_pair.k8s-keypair.key_name
   vpc_security_group_ids = [aws_security_group.security-group-cluster.id]
@@ -87,7 +51,7 @@ resource "aws_instance" "node_master" {
     connection {
       type        = "ssh"
       host        = aws_instance.node_master.public_ip
-      user        = "centos"
+      user        = "ec2-user"
       private_key = file(var.PATH_TO_PRIVATE_KEY)
     }
     source      = "master_shell2.sh"
@@ -99,7 +63,7 @@ resource "aws_instance" "node_master" {
     connection {
       type        = "ssh"
       host        = aws_instance.node_master.public_ip
-      user        = "centos"
+      user        = "ec2-user"
       private_key = file(var.PATH_TO_PRIVATE_KEY)
     }
       inline=[
@@ -112,7 +76,7 @@ resource "aws_instance" "node_master" {
       ]
     }
   tags = {
-    Name = "Master-terrafom"
+    Name = "Master"
   }
 }
 
@@ -128,7 +92,7 @@ resource "aws_eip_association" "master_assoc" {
 
 resource "aws_launch_configuration" "nodes" {
   name_prefix          = "ecs-launchconfig"
-  image_id             = "ami-08df9719b135f181d"
+  image_id             = "ami-00798d7180f25aac2"
   instance_type        = "t2.medium"
   key_name             = aws_key_pair.k8s-keypair.key_name
   iam_instance_profile = aws_iam_instance_profile.node_profile2.name
@@ -142,8 +106,10 @@ resource "aws_autoscaling_group" "ecs-example-autoscaling" {
   launch_configuration = aws_launch_configuration.nodes.name
   min_size             = var.MIN_ASG
   max_size             = var.MAX_ASG
-  vpc_zone_identifier  = [aws_subnet.main-public-1.id, aws_subnet.main-public-2.id]
-
+  vpc_zone_identifier  = [aws_subnet.main-private-3.id]
+  health_check_grace_period = 300 #in seconds
+  health_check_type         = "ELB"
+  load_balancers            = [aws_elb.my-elb.name]
   tag {
     key                 = "Name"
     value               = "cluster-nodes"
