@@ -58,10 +58,6 @@ firewall-cmd --reload
 
 kubeadm join $master_ip:6443 --token $token --discovery-token-unsafe-skip-ca-verification --ignore-preflight-errors all
 
-
-#yum install -y httpd
-#systemctl start httpd
-#systemctl enable httpd
 sudo amazon-linux-extras install nginx1 -y
 sudo systemctl start nginx
 sudo firewall-cmd --zone=public --permanent --add-service=http
