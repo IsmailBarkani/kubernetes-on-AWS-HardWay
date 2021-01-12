@@ -1,6 +1,13 @@
 resource "aws_security_group" "security-group-cluster" {
   vpc_id = aws_vpc.main.id
   name   = "security-group-cluster"
+   ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.elb-securitygroup.id] 
+  }
+
 }
 
 # Allow outgoing connectivity
@@ -42,4 +49,26 @@ resource "aws_security_group_rule" "allow_api_from_cidr" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.security-group-cluster.id
+}
+
+resource "aws_security_group" "elb-securitygroup" {
+  vpc_id = aws_vpc.main.id
+  name        = "elb"
+  description = "security group for load balancer"
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "elb"
+  }
 }

@@ -37,11 +37,11 @@ variable "K8S_TOKEN" {
 }
 
 variable "MIN_ASG" {
-  default = 1
+  default = 2
 }
 
 variable "MAX_ASG" {
-  default = 6
+  default = 4
 }
 
 variable "CLUSTER_NAME" {

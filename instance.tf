@@ -45,8 +45,8 @@ resource "aws_instance" "node_master" {
   vpc_security_group_ids = [aws_security_group.security-group-cluster.id]
   iam_instance_profile   = aws_iam_instance_profile.master_profile2.name
   #user_data              = data.template_cloudinit_config.cloudinit-master.rendered
-  subnet_id              = aws_subnet.main-public-1.id
- provisioner "file" {
+  subnet_id = aws_subnet.main-public-1.id
+  provisioner "file" {
     #nested connection
     connection {
       type        = "ssh"
@@ -58,23 +58,23 @@ resource "aws_instance" "node_master" {
     destination = "/tmp/master_shell2.sh"
   }
 
-  provisioner "remote-exec"{
-        #nested connection
+  provisioner "remote-exec" {
+    #nested connection
     connection {
       type        = "ssh"
       host        = aws_instance.node_master.public_ip
       user        = "ec2-user"
       private_key = file(var.PATH_TO_PRIVATE_KEY)
     }
-      inline=[
-          "cd /tmp",
-          "sudo mv master_shell2.sh ~/",
-          "cd ~",
-          "sudo chmod +x master_shell2.sh",
-          "ls -l master_shell2.sh",
-          "sudo ./master_shell2.sh ${var.K8S_TOKEN}"
-      ]
-    }
+    inline = [
+      "cd /tmp",
+      "sudo mv master_shell2.sh ~/",
+      "cd ~",
+      "sudo chmod +x master_shell2.sh",
+      "ls -l master_shell2.sh",
+      "sudo ./master_shell2.sh ${var.K8S_TOKEN}"
+    ]
+  }
   tags = {
     Name = "Master"
   }
@@ -102,17 +102,18 @@ resource "aws_launch_configuration" "nodes" {
 }
 
 resource "aws_autoscaling_group" "ecs-example-autoscaling" {
-  name                 = "ecs-example-autoscaling"
-  launch_configuration = aws_launch_configuration.nodes.name
-  min_size             = var.MIN_ASG
-  max_size             = var.MAX_ASG
-  vpc_zone_identifier  = [aws_subnet.main-private-3.id]
+  name                      = "ecs-example-autoscaling"
+  launch_configuration      = aws_launch_configuration.nodes.name
+  min_size                  = var.MIN_ASG
+  max_size                  = var.MAX_ASG
+  vpc_zone_identifier       = [aws_subnet.main-public-1.id]
   health_check_grace_period = 300 #in seconds
-  health_check_type         = "ELB"
-  load_balancers            = [aws_elb.my-elb.name]
+  health_check_type         = "EC2"
+ target_group_arns = [aws_lb_target_group.asg.arn]
+  force_delete              = true
   tag {
     key                 = "Name"
-    value               = "cluster-nodes"
+    value               = "Worker"
     propagate_at_launch = true
   }
 }
