@@ -1,16 +1,16 @@
 # Master
 data "template_file" "master_policy_json" {
-  template = file("master-policy.json.tpl")
+  template = file("./modules/add-ons/add-on-policy/master-policy.json.tpl")
   vars     = {}
 }
 
-resource "aws_iam_policy" "master_policy" {
-  name   = "master_policy"
+resource "aws_iam_policy" "master_policy_1" {
+  name   = "master_policy_1"
   policy = data.template_file.master_policy_json.rendered
 }
 
-resource "aws_iam_role" "master_role" {
-  name = "master_role"
+resource "aws_iam_role" "master_role_1" {
+  name = "master_role_1"
 
   assume_role_policy = <<EOF
 {
@@ -31,30 +31,30 @@ EOF
 
 resource "aws_iam_policy_attachment" "master-attach" {
   name       = "master-attachment"
-  roles      = [aws_iam_role.master_role.name]
-  policy_arn = aws_iam_policy.master_policy.arn
+  roles      = [aws_iam_role.master_role_1.name]
+  policy_arn = aws_iam_policy.master_policy_1.arn
 }
 
-resource "aws_iam_instance_profile" "master_profile2" {
-  name = "master_profile2"
-  role = aws_iam_role.master_role.name
+resource "aws_iam_instance_profile" "master_profile_1" {
+  name = "master_profile_1"
+  role = aws_iam_role.master_role_1.name
 }
 
 
 # Node
 data "template_file" "node_policy_json" {
-  template = file("node-policy.json.tpl")
+  template = file("./modules/add-ons/add-on-policy/node-policy.json.tpl")
 
   vars = {}
 }
 
-resource "aws_iam_policy" "node_policy" {
-  name   = "node_policy"
+resource "aws_iam_policy" "node_policy_1" {
+  name   = "node_policy_1"
   policy = data.template_file.node_policy_json.rendered
 }
 
-resource "aws_iam_role" "node_role" {
-  name = "node_role"
+resource "aws_iam_role" "node_role_1" {
+  name = "node_role_1"
 
   assume_role_policy = <<EOF
 {
@@ -76,11 +76,11 @@ EOF
 
 resource "aws_iam_policy_attachment" "node-attach" {
   name       = "node-attachment"
-  roles      = [aws_iam_role.node_role.name]
-  policy_arn = aws_iam_policy.node_policy.arn
+  roles      = [aws_iam_role.node_role_1.name]
+  policy_arn = aws_iam_policy.node_policy_1.arn
 }
 
-resource "aws_iam_instance_profile" "node_profile2" {
-  name = "node_profile2"
-  role = aws_iam_role.node_role.name
+resource "aws_iam_instance_profile" "node_profile_1" {
+  name = "node_profile_1"
+  role = aws_iam_role.node_role_1.name
 }

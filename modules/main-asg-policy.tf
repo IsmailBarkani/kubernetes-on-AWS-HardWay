@@ -28,7 +28,6 @@ resource "aws_cloudwatch_metric_alarm" "cpu-alarm-scale-up" {
 }
 
 #scaling down
-#scaling up 
 resource "aws_autoscaling_policy" "cpu-policy-scaling-down" {
   name                   = "cpu-policy"
   autoscaling_group_name = aws_autoscaling_group.ecs-example-autoscaling.name
