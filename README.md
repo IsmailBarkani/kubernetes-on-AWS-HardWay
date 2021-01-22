@@ -1,17 +1,13 @@
 
 # Projet-SDTD-Scripts-Terraform-Infra
 
-> fff
-
-- dd
-
 ## Modèle d’arborescence de répertoires
 
 La structure de fichiers pour notre module Terraform est comme ci-dessous:
 
 - Répertoire Add-ons: contient des fichiers secondaires pour configurer et installer les prérequis de notre application (fichiers de politique .json, fichiers de configuration .sh, fichiers d'installation .yaml)
 - Répertoire modules: contient tous les fichiers terraform nécessaire pour préparer notre infrastructure AWS (instances, asg, elb, vpc, security groupe ... )
-- maint.tf: c'est le module principal. Il vous permettra de réutiliser le code terraform et de le maintenir d'une maniére plus simple et rapide. En effet,  il regroupe toutes les variables mentionnées dans les fichiers de configuration sous forme des arguments modifiable selon votre utilisation
+- maint.tf:c'est le module principal. Il vous permettra de réutiliser le code terraform et de le maintenir d'une manière plus simple et rapide. En effet, il regroupe toutes les variables mentionnées dans les fichiers de configuration sous forme des arguments modifiables selon votre utilisation
 - terraform.tf: contient les informations d'identification à votre compte AWS (ACCESS_KEY, SECRET_KEY) .
 ```
 ├── Projet-SDTD-Infrastructure
@@ -46,10 +42,10 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
 └── └── outputs.tf
 ```
 ## Cas d'utilisation
-1. Placez vous au niveau du dossier qui contient le fichier maint.tf et lancez la commande suivante:
+1. Placez-vous au niveau du dossier qui contient le fichier maint.tf et lancez la commande suivante:
     >```terraform init```
 
-    Cette commande permettra au Terraform d'initialiser le projet et de provisioner les plugins nécessaire.
+    Cette commande permettra au Terraform d'initialiser le projet et de provisioner les plugins nécessaires.
 
 2. Lancez l'exécution des fichiers Terraform:
    > ```terraform apply```
