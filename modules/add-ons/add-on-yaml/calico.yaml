@@ -520,9 +520,3 @@ spec:
     kind: NetworkPolicy
     plural: networkpolicies
     singular: networkpolicy
-...
-image: quay.io/calico/node:v3.3.2
-env:
-  - name: IP_AUTODETECTION_METHOD
-    value: "can-reach=192.168.56.1"
-...
