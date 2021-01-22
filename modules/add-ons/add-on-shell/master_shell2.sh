@@ -60,7 +60,7 @@ mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/IsmailBarkani/Projet-SDTD-Scripts-Terraform-Infra/master/calico.yaml?token=AMHRRM4FJ3UCMKA3LHYCIP3ACNKOO
+kubectl apply -f https://raw.githubusercontent.com/IsmailBarkani/Projet-SDTD-Scripts-Terraform-Infra/master/modules/add-ons/add-on-yaml/calico.yaml?token=AMHRRM2WAGKQNYNDQ54ASELACP5SI
 
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
