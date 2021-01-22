@@ -611,7 +611,7 @@ spec:
               value: "k8s,bgp"
             # Auto-detect the BGP IP address.
             - name: IP_AUTODETECTION_METHOD
-              value: "interface=eth.*"
+              value: "interface=eth0"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "Always"
