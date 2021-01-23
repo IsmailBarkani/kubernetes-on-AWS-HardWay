@@ -42,12 +42,34 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
 └── └── outputs.tf
 ```
 ## Cas d'utilisation
-1. Placez-vous au niveau du dossier qui contient le fichier maint.tf et lancez la commande suivante:
+1. - Modifier les credentials d'acces à AWS dans le fichier terraform.tfvars.
+   - Ensuite, générer une paire de clés.
+        >```ssh-keygen -f nom_cle```
+   - Récupérer les chemins des clés générées et les mettre au niveau du fichier main.tf.
+        >```PATH_TO_PRIVATE_KEY  = "chemin_cle_privee"```
+        
+        >```PATH_TO_PUBLIC_KEY  = "chemin_cle_public"```
+        
+2. Placez-vous au niveau du dossier qui contient le fichier maint.tf et lancez la commande suivante:
     >```terraform init```
 
     Cette commande permettra au Terraform d'initialiser le projet et de provisioner les plugins nécessaires.
 
-2. Lancez l'exécution des fichiers Terraform:
+3. Approvisionnement et déploiement automatique:
+   - Lancez l'exécution des fichiers Terraform
    > ```terraform apply```
 
-3. 
+4. Connexion à l'instance master:
+   - Récupérer l'adresse IP du master de AWS, puis lancer la connection ssh à cette instance
+   > ```ssh -i cle_privee ec2-user@ip_master```
+   - Récupérer l'adresse IP du master de AWS, puis lancer la connection ssh à cette instance
+   > ```ssh -i cle_privee ec2-user@ip_master```
+
+5. Lancement de l'application de traitement des données issue de l'api IMDB:
+   - Tout d'abord, lancer le producer pour récupérer les données de l'api
+     > ```kubectl exec -it deployment.apps/kafka-producer -- ./start-kafka-producer.sh```
+   
+   - Ouvrir un nouveau terminal et se connecter au master (étape 4), puis lancer Spark avec la commande suivante:
+     > ```spark-submit  --master k8s://https://$K8S_HOST_IP:6443                                                                                                          --deploy-mode cluster                                                                                                                                                            --name kafka-sandbox                                                                                                                                                                                                                                                                          --class SparkNewsConsumer                                                                                                                                                  --conf spark.executor.instances=2                                                                                                                                  --conf "spark.driver.extraClassPath=/guava-19.0.jar"                                                                                                                                                                 --conf "spark.executor.extraClassPath=/guava-19.0.jar"                                                                                                                                                              --conf spark.kubernetes.driver.pod.name=spark-driver-pod                                                                                                                                                                                        --conf spark.kubernetes.container.image=youten/spark:6.2.1                                                                                                                                                                          local:///opt/Spark/target/Spark-1.0-SNAPSHOT-jar-with-dependencies.jar```
+     
+   - VISUALISATION:
