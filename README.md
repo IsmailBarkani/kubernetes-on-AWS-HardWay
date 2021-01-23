@@ -42,7 +42,8 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
 └── └── outputs.tf
 ```
 ## Cas d'utilisation
-1. - Modifier les credentials d'acces à AWS dans le fichier terraform.tfvars.
+1. Gestion d'accès:
+   - Modifier les credentials d'acces à AWS dans le fichier terraform.tfvars.
    - Ensuite, générer une paire de clés.
         >```ssh-keygen -f nom_cle```
    - Récupérer les chemins des clés générées et les mettre au niveau du fichier main.tf.
