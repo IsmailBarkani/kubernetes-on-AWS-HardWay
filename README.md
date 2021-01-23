@@ -43,15 +43,15 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
 ```
 ## Cas d'utilisation
 1. Gestion d'accès:
-   - Modifier les credentials d'acces à AWS dans le fichier terraform.tfvars.
+   - Modifier les credentials d'acces à AWS dans le fichier ***terraform.tfvars***.
    - Ensuite, générer une paire de clés.
         >```ssh-keygen -f nom_cle```
-   - Récupérer les chemins des clés générées et les mettre au niveau du fichier main.tf.
+   - Récupérer les chemins des clés générées et les mettre au niveau du fichier ***main.tf***.
         >```PATH_TO_PRIVATE_KEY  = "chemin_cle_privee"```
         
         >```PATH_TO_PUBLIC_KEY  = "chemin_cle_public"```
         
-2. Placez-vous au niveau du dossier qui contient le fichier maint.tf et lancez la commande suivante:
+2. Placez-vous au niveau du dossier qui contient le fichier ***maint.tf*** et lancez la commande suivante:
     >```terraform init```
 
     Cette commande permettra au Terraform d'initialiser le projet et de provisioner les plugins nécessaires.
