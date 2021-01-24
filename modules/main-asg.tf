@@ -39,7 +39,7 @@ resource "aws_autoscaling_group" "ecs-example-autoscaling" {
   vpc_zone_identifier       = [aws_subnet.main-public-1.id]
   health_check_grace_period = 300 #in seconds
   health_check_type         = "EC2"
- target_group_arns = [aws_lb_target_group.asg.arn]
+  target_group_arns = [aws_lb_target_group.asg.arn]
   force_delete              = true
   tag {
     key                 = "Name"

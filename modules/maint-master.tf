@@ -59,6 +59,10 @@ resource "aws_instance" "node_master" {
     source      = "./modules/add-ons/add-on-yaml/cassandra-cluster.yml"
     destination = "/tmp/cassandra-cluster.yml"
   }
+  provisioner "file" {
+    source      = "./modules/add-ons/add-on-yaml/calico.yaml"
+    destination = "/tmp/calico.yaml"
+  }
 
   provisioner "remote-exec" {
     connection {

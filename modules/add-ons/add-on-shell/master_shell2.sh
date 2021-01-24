@@ -51,16 +51,15 @@ systemctl start kubelet
 
 kubeadm config images pull
 
-firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252}/tcp
-firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
+firewall-cmd --zone=public --permanent --add-port={6443,2379,2380,10250,10251,10252,179}/tcp
+#firewall-cmd --zone=public --permanent --add-rich-rule 'rule family=ipv4 source address=172.17.0.0/16 accept'
 firewall-cmd --reload
 kubeadm init --token=$token --pod-network-cidr 192.168.0.0/16 
 
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
-
-kubectl apply -f https://raw.githubusercontent.com/IsmailBarkani/Projet-SDTD-Scripts-Terraform-Infra/master/modules/add-ons/add-on-yaml/calico.yaml?token=AMHRRM2WAGKQNYNDQ54ASELACP5SI
+kubectl apply -f /tmp/calico.yaml
 
 kubectl taint nodes --all node-role.kubernetes.io/master-
 

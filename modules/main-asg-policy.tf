@@ -17,7 +17,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu-alarm-scale-up" {
   namespace           = "AWS/EC2"
   period              = "120"
   statistic           = "Average"
-  threshold           = "55" #%
+  threshold           = "35" #%
 
   dimensions = {
     "AutoScalingGroupName" = aws_autoscaling_group.ecs-example-autoscaling.name

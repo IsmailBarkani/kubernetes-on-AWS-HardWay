@@ -53,15 +53,15 @@ yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable kubelet
 systemctl start kubelet
 
-firewall-cmd --zone=public --permanent --add-port={10250,30000-32767}/tcp
+firewall-cmd --zone=public --permanent --add-port={10250,30000-32767,179}/tcp
 firewall-cmd --reload
 
 kubeadm join $master_ip:6443 --token $token --discovery-token-unsafe-skip-ca-verification --ignore-preflight-errors all
 
-sudo amazon-linux-extras install nginx1 -y
-sudo systemctl start nginx
-sudo firewall-cmd --zone=public --permanent --add-service=http
-sudo firewall-cmd --zone=public --permanent --add-service=https
-sudo firewall-cmd --reload
-{ echo Je suis Instance: ; hostname -i; } > /usr/share/nginx/html/index.html
+#sudo amazon-linux-extras install nginx1 -y
+#sudo systemctl start nginx
+#sudo firewall-cmd --zone=public --permanent --add-service=http
+#sudo firewall-cmd --zone=public --permanent --add-service=https
+#sudo firewall-cmd --reload
+# echo Je suis Instance: ; hostname -i; } > /usr/share/nginx/html/index.html
 

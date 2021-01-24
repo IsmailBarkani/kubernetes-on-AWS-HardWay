@@ -43,3 +43,6 @@ variable "MAX_ASG" {
 variable "CLUSTER_NAME" {
   default = "k8s-cluster"
 }
+
+
+

@@ -1,10 +1,6 @@
 
 # Projet-SDTD-Scripts-Terraform-Infra
 
-> fff
-
-- dd
-
 ## Modèle d’arborescence de répertoires
 
 La structure de fichiers pour notre module Terraform est comme ci-dessous:
