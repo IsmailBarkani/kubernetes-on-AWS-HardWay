@@ -61,9 +61,7 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
    > ```terraform apply```
 
 4. Connexion à l'instance master:
-   - Récupérer l'adresse IP du master de AWS, puis lancer la connection ssh à cette instance
-   > ```ssh -i cle_privee ec2-user@ip_master```
-   - Récupérer l'adresse IP du master de AWS, puis lancer la connection ssh à cette instance
+   - Récupérer l'adresse IP du master de AWS depuis le terminal, puis lancer la connection ssh à cette instance
    > ```ssh -i cle_privee ec2-user@ip_master```
 
 5. Lancement de l'application de traitement des données issue de l'api IMDB:
