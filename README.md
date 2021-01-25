@@ -67,10 +67,20 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
    > ```ssh -i cle_privee ec2-user@ip_master```
 
 5. Lancement de l'application de traitement des données issue de l'api IMDB:
-   - Tout d'abord, lancer le producer pour récupérer les données de l'api
-     > ```kubectl exec -it deployment.apps/kafka-producer -- ./start-kafka-producer.sh```
+   - Tout d'abord, lancer le driver de Spark.
+     > ```spark-submit  --master k8s://https://$K8S_HOST_IP:6443  --deploy-mode cluster --name kafka-sandbox --class SparkNewsConsumer  --conf spark.executor.instances=2 --conf "spark.driver.extraClassPath=/guava-19.0.jar"  --conf "spark.executor.extraClassPath=/guava-19.0.jar" --conf spark.kubernetes.driver.pod.name=spark-driver-pod --conf spark.kubernetes.container.image=youten/spark:6.2.7 local:///opt/Spark/target/Spark-1.0-SNAPSHOT-jar-with-dependencies.jar```
+        
+6. Visualisation des résultats de traitement: 
+   - Ouvrir un nouveau terminal et se connecter au master (étape 4)
+   - Entrer dans le menu de visualisation en utilisant les commandes suivantes:
    
-   - Ouvrir un nouveau terminal et se connecter au master (étape 4), puis lancer Spark avec la commande suivante:
-     > ```spark-submit  --master k8s://https://$K8S_HOST_IP:6443                                                                                                          --deploy-mode cluster                                                                                                                                                            --name kafka-sandbox                                                                                                                                                                                                                                                                          --class SparkNewsConsumer                                                                                                                                                  --conf spark.executor.instances=2                                                                                                                                  --conf "spark.driver.extraClassPath=/guava-19.0.jar"                                                                                                                                                                 --conf "spark.executor.extraClassPath=/guava-19.0.jar"                                                                                                                                                              --conf spark.kubernetes.driver.pod.name=spark-driver-pod                                                                                                                                                                                        --conf spark.kubernetes.container.image=youten/spark:6.2.1                                                                                                                                                                          local:///opt/Spark/target/Spark-1.0-SNAPSHOT-jar-with-dependencies.jar```
-     
-   - VISUALISATION:
+   ```kubectl exec -it deploy/visualisation-pod -- /bin/bash```
+   
+   ```cd /opt/ApplicationSdtd```
+   
+   ```mvn exec:java -D exec.mainClass=SearchData```
+ 
+7. Terminaison: 
+   - Dans un nouveau terminal, lancer le script ***end.sh***.
+   - Ensuite, quitter l'instance EC2, et finalement lancer la commande:
+   ```echo yes | terraform destroy```
