@@ -64,8 +64,8 @@ La structure de fichiers pour notre module Terraform est comme ci-dessous:
    - Récupérer l'adresse IP du master de AWS depuis le terminal, puis lancer la connection ssh à cette instance
    > ```ssh -i cle_privee ec2-user@ip_master```
 
-5. Lancement de l'application de traitement des données issue de l'api IMDB:
-   - Tout d'abord, lancer le driver de Spark.
+5. Lancement de l'application de traitement des données issue de l'api IMDB en lançant le driver Spark:
+
      > ```spark-submit  --master k8s://https://$K8S_HOST_IP:6443  --deploy-mode cluster --name kafka-sandbox --class SparkNewsConsumer  --conf spark.executor.instances=2 --conf "spark.driver.extraClassPath=/guava-19.0.jar"  --conf "spark.executor.extraClassPath=/guava-19.0.jar" --conf spark.kubernetes.driver.pod.name=spark-driver-pod --conf spark.kubernetes.container.image=youten/spark:6.2.7 local:///opt/Spark/target/Spark-1.0-SNAPSHOT-jar-with-dependencies.jar```
         
 6. Visualisation des résultats de traitement: 
