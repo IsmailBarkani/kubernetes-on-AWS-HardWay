@@ -1,4 +1,7 @@
 # kubernetes-on-AWS-HardWay
+[![Terraform](https://img.shields.io/static/v1?label=Terraform&message=v0.12.25&color=blueviolet&logo=Terraform)](https://www.terraform.io/downloads.html)
+[![AWS](https://img.shields.io/static/v1?label=AWS-CLI&message=v1.18.60&color=orange&logo=amazon)](https://aws.amazon.com/fr/cli/)
+
 Provisioning Kubernetes clusters on AWS with Terraform.
 
 :white_check_mark: 1. deploy Kubernetes on single node
@@ -20,8 +23,6 @@ Provisioning Kubernetes clusters on AWS with Terraform.
 :white_check_mark: 9. Performance Test (ELB, ASG)
 
 
-[![Terraform](https://img.shields.io/static/v1?label=Terraform&message=v0.12.25&color=blueviolet&logo=Terraform)](https://www.terraform.io/downloads.html)
-[![AWS](https://img.shields.io/static/v1?label=AWS-CLI&message=v1.18.60&color=orange&logo=amazon)](https://aws.amazon.com/fr/cli/)
 
  - **Save your AWS access key in a .tfvars file (never share a .tfvars file)**
 
