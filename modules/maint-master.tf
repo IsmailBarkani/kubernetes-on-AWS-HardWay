@@ -30,35 +30,6 @@ resource "aws_instance" "node_master" {
     source      = "./modules/add-ons/add-on-shell/master_shell2.sh"
     destination = "/tmp/master_shell2.sh"
   }
-
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/kafka-service.yml"
-    destination = "/tmp/kafka-service.yml"
-  }
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/kafka-cluster1.yml"
-    destination = "/tmp/kafka-cluster1.yml"
-  }
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/kafka-cluster.yml"
-    destination = "/tmp/kafka-cluster.yml"
-  }
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/zookeeper-service.yml"
-    destination = "/tmp/zookeeper-service.yml"
-  }
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/zookeeper-cluster.yml"
-    destination = "/tmp/zookeeper-cluster.yml"
-  }
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/client.yml"
-    destination = "/tmp/client.yml"
-  }
-  provisioner "file" {
-    source      = "./modules/add-ons/add-on-yaml/cassandra-cluster.yml"
-    destination = "/tmp/cassandra-cluster.yml"
-  }
   provisioner "file" {
     source      = "./modules/add-ons/add-on-yaml/calico.yaml"
     destination = "/tmp/calico.yaml"

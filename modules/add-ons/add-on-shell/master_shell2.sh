@@ -78,39 +78,6 @@ yum install wget -y
 #java installation
 yum install java-1.8.0-openjdk -y
 
-#Spark 2.4.7 installation
-wget https://apache.mediamirrors.org/spark/spark-2.4.7/spark-2.4.7-bin-hadoop2.7.tgz
-tar -xvf spark-2.4.7-bin-hadoop2.7.tgz
-rm -f spark-2.4.7-bin-hadoop2.7.tgz
-
-
-#Setting up spark environment
-export K8S_HOST_IP=$(hostname -i)
-echo 'export K8S_HOST_IP='$K8S_HOST_IP >> ~/.bashrc
-source ~/.bashrc
-
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.272.b10-1.amzn2.0.1.x86_64/jre
-echo 'export JAVA_HOME='$JAVA_HOME >> ~/.bashrc
-source ~/.bashrc
-
-echo 'export PATH=$PATH:/home/ec2-user/spark-2.4.7-bin-hadoop2.7/bin' >> ~/.bashrc
-source ~/.bashrc
-
-kubectl create clusterrolebinding default --clusterrole=edit --serviceaccount=default:default --namespace=default
-
-
-#Kafka & Zookeeper deployment
-kubectl create -f /tmp/zookeeper-service.yml
-kubectl create -f /tmp/zookeeper-cluster.yml
-sleep 30
-kubectl create -f /tmp/kafka-service.yml
-kubectl create -f /tmp/kafka-cluster1.yml
-sleep 30
-kubectl create -f /tmp/client.yml
-sleep 30
-
-#Cassandra deployment
-kubectl create -f /tmp/cassandra-cluster.yml
 
 
 
